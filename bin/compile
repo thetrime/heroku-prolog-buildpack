@@ -34,11 +34,12 @@ echo "-----> Using SWI Prolog version $ver"
     echo "-------> Fetching SWI Prolog from git"
     git clone https://github.com/SWI-Prolog/swipl-devel.git || exit 1
     cd swipl-devel
+    echo "-------> Ensuring HTTP"
+    git submodule update --init packages/http
+
     echo "-------> Building SWI Prolog $ver in ${cache}/${ver}"
     sed -i -e 's@2.66@2.65@g' src/configure.in
     ./prepare --yes --all --man
-    echo "-------> Ensuring HTTP"
-    git submodule update --init packages/http
     ./configure --with-world --prefix=/app/swipl-${ver} && make || exit 1
     echo "-------> Installing SWI Prolog $ver"
     make install || exit 1
