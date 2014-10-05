@@ -39,7 +39,7 @@ echo "-----> Using SWI Prolog version $ver"
     echo "-------> Building SWI Prolog $ver in ${cache}/${ver}"
     sed -i -e 's@2.66@2.65@g' src/configure.in
     ./prepare --yes --all --man
-    ./configure --with-world --prefix=${cache}/swipl-${ver} && make || exit 1
+    ./configure --with-world --prefix=${build}/swipl-${ver} && make || exit 1
     echo "-------> Installing SWI Prolog $ver"
     make install || exit 1
     touch ${cache}/${ver}-compiled
@@ -53,8 +53,9 @@ export PATH
 
 cd $build
 pwd
-echo ${cache}/swipl-${ver}/bin/swipl -o splunge -c /app/main.pl -g go -t prolog
-${cache}/swipl-${ver}/bin/swipl -o splunge -c /app/main.pl -g go -t prolog
+swipl="${build}/swipl-${ver}/bin/swipl"
+echo ${swipl} -o splunge -c /app/main.pl -g go -t prolog
+${swipl} -o splunge -c /app/main.pl -g go -t prolog
 
 echo "-----> Build succeeded"
 
