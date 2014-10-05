@@ -32,8 +32,11 @@ echo "-----> Using SWI Prolog version $ver"
     mkdir ${ver}
     cd ${ver}
     echo "-------> Fetching SWI Prolog from git"
+    pwd
     git clone https://github.com/SWI-Prolog/swipl-devel.git || exit 1
     cd swipl-devel
+    pwd
+    ls -a
     echo "-------> Ensuring HTTP"
     git submodule update --init packages/http
 
