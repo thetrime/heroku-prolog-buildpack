@@ -25,7 +25,7 @@ echo "-----> Using SWI Prolog version $ver"
     set -e
     unset GIT_DIR
     # Already cached?
-    #test -f ${cache}/${ver}-compiled && exit
+    test -f ${cache}/${ver}-compiled && exit
 
     rm -rf ${cache}/${ver}
     cd ${cache}
@@ -54,7 +54,7 @@ export PATH
 cd $build
 pwd
 swipl="${build}/swipl-${ver}/bin/swipl"
-echo ${swipl} -o splunge -c /app/main.pl -g go -t prolog
+echo ${swipl} -o splunge -c main.pl -g go -t prolog
 ${swipl} -o splunge -c /app/main.pl -g go -t prolog
 
 echo "-----> Build succeeded"
