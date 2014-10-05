@@ -39,6 +39,8 @@ echo "-----> Using SWI Prolog version $ver"
     cd swipl-devel
     pwd
     ls -a
+    ls -a packages
+    ls -a packages/http
     echo "-------> Ensuring HTTP"
     echo git submodule update --init packages/http
     git submodule update --init packages/http
