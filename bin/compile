@@ -25,7 +25,7 @@ echo "-----> Using SWI Prolog version $ver"
     set -e
     unset GIT_DIR
     # Already cached?
-    #test -f ${cache}/${ver}-compiled && exit
+    test -f ${cache}/${ver}-compiled && exit
 
     rm -rf ${cache}/${ver}
     cd ${cache}
@@ -45,6 +45,8 @@ echo "-----> Using SWI Prolog version $ver"
     touch ${cache}/${ver}-compiled
     echo "-------> Installed SWI Prolog $ver"
 )
+
+echo "-----> Found SWI Prolog version $ver ready for use"
 
 PATH=/app/swipl-${ver}/bin:$PATH
 export PATH
