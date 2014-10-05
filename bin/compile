@@ -25,7 +25,7 @@ echo "-----> Using SWI Prolog version $ver"
     set -e
 
     # Already cached?
-    test -f ${cache}/${ver}-compiled && exit
+    #test -f ${cache}/${ver}-compiled && exit
 
     rm -rf ${cache}/* # be sure not to build up cruft
     cd ${cache}
