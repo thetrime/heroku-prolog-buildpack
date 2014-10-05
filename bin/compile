@@ -52,7 +52,7 @@ PATH=/app/swipl-${ver}/bin:$PATH
 export PATH
 
 cd $build
-swipl -o splunge -c /app/main.pl -g go -t prolog
+/app/swipl-${ver}/bin/swipl -o splunge -c /app/main.pl -g go -t prolog
 
 echo "-----> Build succeeded"
 
