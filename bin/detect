@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# this pack is valid for apps with a swipl.config in the root
+if [ -f $1/swipl.config ]; then
+  echo "Prolog"
+  exit 0
+else
+  exit 1
+fi
