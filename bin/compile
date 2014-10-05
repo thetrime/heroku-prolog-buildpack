@@ -16,13 +16,13 @@ if [ -f ${build}/.preferred_swi_version ]; then
 fi
 ver=${SWI_VERSION:=${DEFAULT_SWI_VERSION}}
 tarball=${ver}.tgz
-SWI_TARBALL_URL="https://s3.amazonaws.com/heroku-buildpack-erlang/${tarball}"
-
-echo "-----> Using SWI Prolog $ver"
-echo "I did not think we would get this far"
-exit 1
+#SWI_TARBALL_URL="https://s3.amazonaws.com/heroku-buildpack-erlang/${tarball}"
+SWIROOT=${build}/swi
+PROFILE=${HOME}/.profile.d
 
 
+
+echo "-----> Using SWI Prolog version $ver"
 (
     set -e
 
@@ -31,38 +31,20 @@ exit 1
 
     rm -rf ${cache}/* # be sure not to build up cruft
     cd ${cache}
-    echo "-------> Fetching Erlang/OTP $ver"
-    curl -sO ${OTP_TARBALL_URL} || exit 1
+    echo "-------> Fetching SWI Prolog from git"
+    git clone https://github.com/SWI-Prolog/swipl-devel.git || exit 1
 )
 
-echo "-------> Unpacking Erlang/OTP $ver"
-mkdir -p ${ERLROOT}
-tar zxf ${cache}/${tarball} -C ${ERLROOT} --strip-components=2
-echo "-------> Installing Erlang/OTP $ver"
-ln -s ${ERLROOT} /app/otp
-${ERLROOT}/Install -minimal /app/otp
+echo "-------> Building SWI Prolog $ver"
+mkdir -p ${SWIROOT}
+./configure --prefix=/app/swipl-${ver} && make || exit 1
+echo "-------> Installing SWI Prolog $ver"
+make install
 
-PATH=/app/otp/bin:$PATH
+PATH=/app/swipl-${ver}/bin:$PATH
 export PATH
 
 cd $build
 
-if [ ! -e "rebar" ]; then
-  echo "-----> Installing Rebar from buildpack"
-  cp ${bpdir}/opt/rebar ./
-fi
-
-echo "-----> Building with Rebar"
-unset GIT_DIR
-./rebar get-deps compile 2>&1 | sed -u 's/^/       /'
-if [ ${PIPESTATUS[0]} -ne 0 ]; then
-  echo "-----> Build failed"
-  exit 1
-fi
-
-if [ -f ${bpdir}/opt/otp.sh ]; then
-  mkdir -p ${PROFILE}
-  cp ${bpdir}/opt/otp.sh ${PROFILE}
-fi
-
 echo "-----> Build succeeded"
+
