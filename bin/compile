@@ -47,6 +47,7 @@ echo "-----> Using SWI Prolog version $ver"
 )
 
 echo "-----> Found SWI Prolog version $ver ready for use in ${cache}/${ver}"
+ls ${build}/swipl-${ver}
 
 PATH=${cache}/swipl-${ver}/bin:$PATH
 export PATH
