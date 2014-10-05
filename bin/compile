@@ -29,13 +29,12 @@ echo "-----> Using SWI Prolog version $ver"
 
     rm -rf ${cache}/* # be sure not to build up cruft
     cd ${cache}
-    rm -rf ${ver}
     mkdir ${ver}
     cd ${ver}
     echo "-------> Fetching SWI Prolog from git"
     pwd
-    echo git clone https://github.com/SWI-Prolog/swipl-devel.git
-    git clone https://github.com/SWI-Prolog/swipl-devel.git || exit 1
+    echo git clone --branch ${ver} https://github.com/SWI-Prolog/swipl-devel.git
+    git clone --branch ${ver} https://github.com/SWI-Prolog/swipl-devel.git || exit 1
     cd swipl-devel
     pwd
     ls -a
