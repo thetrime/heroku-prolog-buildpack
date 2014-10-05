@@ -27,7 +27,7 @@ echo "-----> Using SWI Prolog version $ver"
     set -e
 
     # Already cached?
-    test -f ${cache}/${tarball} && exit
+    test -f ${cache}/${ver}-compiled && exit
 
     rm -rf ${cache}/* # be sure not to build up cruft
     cd ${cache}
@@ -35,11 +35,15 @@ echo "-----> Using SWI Prolog version $ver"
     git clone https://github.com/SWI-Prolog/swipl-devel.git || exit 1
 )
 
-echo "-------> Building SWI Prolog $ver"
+echo "-------> Building SWI Prolog $ver in ${SWIROOT}"
 mkdir -p ${SWIROOT}
 ./configure --prefix=/app/swipl-${ver} && make || exit 1
 echo "-------> Installing SWI Prolog $ver"
-make install
+make install || exit 1
+
+touch ${cache}/${ver}-compiled
+
+echo "-------> Installed SWI Prolog $ver"
 
 PATH=/app/swipl-${ver}/bin:$PATH
 export PATH
