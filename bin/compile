@@ -25,7 +25,7 @@ echo "-----> Using SWI Prolog version $ver"
     set -e
     unset GIT_DIR
     # Already cached?
-    test -f ${cache}/${ver}-compiled && exit
+    #test -f ${cache}/${ver}-compiled && exit
 
     rm -rf ${cache}/${ver}
     cd ${cache}
@@ -39,7 +39,7 @@ echo "-----> Using SWI Prolog version $ver"
     echo "-------> Building SWI Prolog $ver in ${cache}/${ver}"
     sed -i -e 's@2.66@2.65@g' src/configure.in
     ./prepare --yes --all --man
-    ./configure --with-world --prefix=/app/swipl-${ver} && make || exit 1
+    ./configure --with-world --prefix=${cache}/swipl-${ver} && make || exit 1
     echo "-------> Installing SWI Prolog $ver"
     make install || exit 1
     touch ${cache}/${ver}-compiled
@@ -48,13 +48,13 @@ echo "-----> Using SWI Prolog version $ver"
 
 echo "-----> Found SWI Prolog version $ver ready for use in ${cache}/${ver}"
 
-PATH=/app/swipl-${ver}/bin:$PATH
+PATH=${cache}/swipl-${ver}/bin:$PATH
 export PATH
 
 cd $build
 pwd
-echo /app/swipl-${ver}/bin/swipl -o splunge -c /app/main.pl -g go -t prolog
-/app/swipl-${ver}/bin/swipl -o splunge -c /app/main.pl -g go -t prolog
+echo ${cache}/swipl-${ver}/bin/swipl -o splunge -c /app/main.pl -g go -t prolog
+${cache}/swipl-${ver}/bin/swipl -o splunge -c /app/main.pl -g go -t prolog
 
 echo "-----> Build succeeded"
 
