@@ -27,7 +27,7 @@ echo "-----> Using SWI Prolog version $ver"
     # Already cached?
     #test -f ${cache}/${ver}-compiled && exit
 
-    rm -rf ${cache}/* # be sure not to build up cruft
+    rm -rf ${cache}/${ver}
     cd ${cache}
     mkdir ${ver}
     cd ${ver}
@@ -38,7 +38,8 @@ echo "-----> Using SWI Prolog version $ver"
     git clone --branch ${ver} https://github.com/SWI-Prolog/swipl-devel.git || exit 1
     cd swipl-devel
     echo "-------> Ensuring HTTP"
-    echo git submodule update --init packages/http
+    ls -la
+    echo git submodule add https://github.com/swi-prolog/packages-http packages/http
     git submodule add https://github.com/swi-prolog/packages-http packages/http
 
     echo "-------> Building SWI Prolog $ver in ${cache}/${ver}"
