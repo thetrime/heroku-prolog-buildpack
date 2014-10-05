@@ -39,6 +39,8 @@ echo "-----> Using SWI Prolog version $ver"
     cd swipl-devel
     echo "-------> Ensuring HTTP"
     ls -la
+    echo "Current directory:"
+    pwd
     echo "Status:"
     git status
     echo "done"
