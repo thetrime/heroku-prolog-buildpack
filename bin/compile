@@ -35,6 +35,7 @@ echo "-----> Using SWI Prolog version $ver"
     git clone https://github.com/SWI-Prolog/swipl-devel.git || exit 1
     cd swipl-devel
     echo "-------> Building SWI Prolog $ver in ${cache}/${ver}"
+    sed -i -e 's@2.66@2.65@g' src/configure.in
     ./prepare --yes --all --man
     ./configure --prefix=/app/swipl-${ver} && make || exit 1
     echo "-------> Installing SWI Prolog $ver"
