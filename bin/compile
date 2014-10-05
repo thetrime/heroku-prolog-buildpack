@@ -16,8 +16,6 @@ if [ -f ${build}/.preferred_swi_version ]; then
 fi
 ver=${SWI_VERSION:=${DEFAULT_SWI_VERSION}}
 tarball=${ver}.tgz
-#SWI_TARBALL_URL="https://s3.amazonaws.com/heroku-buildpack-erlang/${tarball}"
-SWIROOT=${build}/swi
 PROFILE=${HOME}/.profile.d
 
 
@@ -31,19 +29,18 @@ echo "-----> Using SWI Prolog version $ver"
 
     rm -rf ${cache}/* # be sure not to build up cruft
     cd ${cache}
+    mkdir ${ver}
+    cd ${ver}
     echo "-------> Fetching SWI Prolog from git"
     git clone https://github.com/SWI-Prolog/swipl-devel.git || exit 1
+    cd swipl-devel
+    echo "-------> Building SWI Prolog $ver in ${cache}/${ver}"
+    ./configure --prefix=/app/swipl-${ver} && make || exit 1
+    echo "-------> Installing SWI Prolog $ver"
+    make install || exit 1
+    touch ${cache}/${ver}-compiled
+    echo "-------> Installed SWI Prolog $ver"
 )
-
-echo "-------> Building SWI Prolog $ver in ${SWIROOT}"
-mkdir -p ${SWIROOT}
-./configure --prefix=/app/swipl-${ver} && make || exit 1
-echo "-------> Installing SWI Prolog $ver"
-make install || exit 1
-
-touch ${cache}/${ver}-compiled
-
-echo "-------> Installed SWI Prolog $ver"
 
 PATH=/app/swipl-${ver}/bin:$PATH
 export PATH
