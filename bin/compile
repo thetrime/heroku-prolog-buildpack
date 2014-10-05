@@ -29,6 +29,7 @@ echo "-----> Using SWI Prolog version $ver"
 
     rm -rf ${cache}/* # be sure not to build up cruft
     cd ${cache}
+    rm -rf ${ver}
     mkdir ${ver}
     cd ${ver}
     echo "-------> Fetching SWI Prolog from git"
