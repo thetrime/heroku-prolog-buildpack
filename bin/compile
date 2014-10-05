@@ -46,7 +46,7 @@ echo "-----> Using SWI Prolog version $ver"
     echo "-------> Installed SWI Prolog $ver"
 )
 
-echo "-----> Found SWI Prolog version $ver ready for use"
+echo "-----> Found SWI Prolog version $ver ready for use in ${cache}/${ver}"
 
 PATH=/app/swipl-${ver}/bin:$PATH
 export PATH
