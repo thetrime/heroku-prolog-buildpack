@@ -23,7 +23,7 @@ PROFILE=${HOME}/.profile.d
 echo "-----> Using SWI Prolog version $ver"
 (
     set -e
-
+    unset GIT_DIR
     # Already cached?
     #test -f ${cache}/${ver}-compiled && exit
 
