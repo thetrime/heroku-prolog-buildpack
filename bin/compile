@@ -26,6 +26,7 @@ echo "-----> Using SWI Prolog version $ver"
     # We MUST do this or git will go bezerk when we try to do anything to the checked-out SWI repository
     unset GIT_DIR
     # Already got a servicable build of SWI-Prolog?
+    ls -la ${cache}
     test -f ${cache}/swipl-${ver}.tgz && exit
     # Otherwise, we must compile one. Build it in ${build}/swipl-build, and install to /app/.local then compress
     # /app/.local to ${cache}/swipl-${ver}.tgz
@@ -47,7 +48,7 @@ echo "-----> Using SWI Prolog version $ver"
     echo "-------> Installing SWI Prolog $ver"
     make install || exit 1
     cd /app
-    tar -czvf ${cache}/swipl-${ver}.tgz .local
+    tar -czf ${cache}/swipl-${ver}.tgz .local
     # Now clean up
     rm -rf ${build}/swipl-build
     rm -rf /app/.local
@@ -55,7 +56,7 @@ echo "-----> Using SWI Prolog version $ver"
 )
 echo "-----> Found SWI Prolog version $ver ready for use in ${cache}/swipl-${ver}.tgz. Unpacking..."
 cd /app
-tar -xzvf ${cache}/swipl-${ver}.tgz
+tar -xzf ${cache}/swipl-${ver}.tgz
 PATH=${cache}/.local/bin:$PATH
 export PATH
 
