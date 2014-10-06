@@ -23,40 +23,51 @@ PROFILE=${HOME}/.profile.d
 echo "-----> Using SWI Prolog version $ver"
 (
     set -e
+    # We MUST do this or git will go bezerk when we try to do anything to the checked-out SWI repository
     unset GIT_DIR
-    # Already cached?
+    # Already got a servicable build of SWI-Prolog?
     test -f ${cache}/${ver}-compiled && exit
-
-    rm -rf ${cache}/${ver}
-    cd ${cache}
-    mkdir ${ver}
-    cd ${ver}
-    gitver=$(git --version)
-    echo "-------> Fetching SWI Prolog ${ver} from git using ${gitver}"
+    # Otherwise, we must compile one. Build it in ${build}/swipl-build, and install to /app/.local then compress
+    # /app/.local to ${cache}/swipl-${ver}.tgz
+    rm -rf ${build}/swipl-build
+    mkdir -p ${build}/swipl-build
+    cd ${build}/swipl-build
+    echo "-------> Fetching SWI Prolog from git"
     git clone --branch ${ver} https://github.com/SWI-Prolog/swipl-devel.git
     cd swipl-devel
-    echo "-------> Ensuring HTTP"
-    echo "-------> Building SWI Prolog $ver in ${cache}/${ver}"
+    echo "-------> Switching to version ${ver}"
+    git checkout ${ver}
+    echo "-------> Building SWI Prolog $ver in ${build}/swipl-build"
+    # First apply a very small patch so we can compile on Cedar. This seems to be harmless. Hopefully.
     sed -i -e 's@2.66@2.65@g' src/configure.in
+    # Prepare the build
     ./prepare --yes --all --man
-    ./configure --with-world --prefix=${build}/swipl-${ver} && make || exit 1
+    # Configure and build it
+    ./configure --with-world --prefix=app/.local && make || exit 1
     echo "-------> Installing SWI Prolog $ver"
     make install || exit 1
+    cd /app
+    tar -czvf ${cache}/swipl-${ver}.tgz .local
+    # Now clean up
+    rm -rf ${build}/swipl-build
+    rm -rf /app/.local
     touch ${cache}/${ver}-compiled
     echo "-------> Installed SWI Prolog $ver"
 )
-
-echo "-----> Found SWI Prolog version $ver ready for use in ${cache}/${ver}"
-ls ${build}/swipl-${ver}
-
-PATH=${cache}/swipl-${ver}/bin:$PATH
+echo "-----> Found SWI Prolog version $ver ready for use in ${cache}/swipl-${ver}.tgz. Unpacking..."
+cd /app
+tar -xzvf ${cache}/swipl-${ver}.tgz
+PATH=${cache}/.local/bin:$PATH
 export PATH
 
+echo "-----> Compiling slug"
 cd $build
 pwd
-swipl="${build}/swipl-${ver}/bin/swipl"
+swipl="/app/.local/bin/swipl"
 echo ${swipl} -o splunge -c main.pl -g go -t prolog
-${swipl} -o splunge -c /app/main.pl -g go -t prolog
+${swipl} -o splunge -c main.pl -g go -t prolog
+cp /app/.local/lib/swipl-${ver}/lib/
+ls -la
 
 echo "-----> Build succeeded"
 
