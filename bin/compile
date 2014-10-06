@@ -49,6 +49,7 @@ echo "-----> Using SWI Prolog version $ver"
     make install || exit 1
     cd /app
     tar -czf ${cache}/swipl-${ver}.tgz .local
+    ls -la ${cache}
     # Now clean up
     rm -rf ${build}/swipl-build
     rm -rf /app/.local
