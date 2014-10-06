@@ -43,7 +43,7 @@ echo "-----> Using SWI Prolog version $ver"
     # Prepare the build
     ./prepare --yes --all --man
     # Configure and build it
-    ./configure --with-world --prefix/=app/.local && make || exit 1
+    ./configure --with-world --prefix=/app/.local && make || exit 1
     echo "-------> Installing SWI Prolog $ver"
     make install || exit 1
     cd /app
