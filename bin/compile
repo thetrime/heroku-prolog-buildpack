@@ -66,8 +66,6 @@ pwd
 swipl="/app/.local/bin/swipl"
 echo ${swipl} -o splunge -c main.pl -g go -t prolog
 ${swipl} -o splunge -c main.pl -g go -t prolog
-cd /app/.local/lib/swipl-${ver}/lib/
-ls -la
 
 echo "-----> Build succeeded"
 
