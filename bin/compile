@@ -68,6 +68,7 @@ cp /app/.local/lib/swipl-7.1.23/lib/${arch}/*.so ${build}/
 #/app/.local/bin/swipl -o ${build}/splunge -g go -t prolog --stand_alone=true -c main.pl
 PATH=$PATH:/app/.local/bin
 eval `${swipl} --dump-runtime-vars`
+echo swipl-ld -t prolog -Wl,-rpath, -Wl,. -g go -o splunge main.c main.pl
 swipl-ld -t prolog -Wl,-rpath, -Wl,. -g go -o splunge main.c main.pl
 echo "-----> Build succeeded"
 
