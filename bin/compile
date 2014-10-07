@@ -18,7 +18,9 @@ ver=${SWI_VERSION:=${DEFAULT_SWI_VERSION}}
 tarball=${ver}.tgz
 PROFILE=${HOME}/.profile.d
 
-
+echo "Build: ${build}"
+echo "Cache: ${cache}"
+exit 7
 
 echo "-----> Using SWI Prolog version $ver"
 (
