@@ -66,5 +66,7 @@ swipl="/app/.local/bin/swipl"
 echo ${swipl} -o splunge -c main.pl -g go -t prolog
 ${swipl} -o splunge -c main.pl -g go -t prolog
 
+ls /app/.local/lib
+
 echo "-----> Build succeeded"
 
