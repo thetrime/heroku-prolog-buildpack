@@ -64,7 +64,7 @@ swipl="/app/.local/bin/swipl"
 arch=$(${swipl} --arch)
 cp -r /app/.local ${build}/
 PATH=$PATH:/app/.local/bin
-eval `${swipl} -q --dump-runtime-vars`
+#eval `${swipl} -q --dump-runtime-variables`
 /app/.local/bin/swipl -q -o ${build}/splunge -g go -t prolog --stand_alone=true -c main.pl
 echo "-----> Build succeeded"
 
