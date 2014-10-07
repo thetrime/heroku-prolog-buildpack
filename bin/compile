@@ -63,11 +63,10 @@ echo "-----> Compiling slug"
 cd $build
 pwd
 swipl="/app/.local/bin/swipl"
-echo ${swipl} -o splunge -c main.pl -g go -t prolog
-${swipl} -o splunge -c main.pl -g go -t prolog
 arch=$(${swipl} --arch)
 ls /app/.local/lib/swipl-7.1.23/lib
 ls /app/.local/lib/swipl-7.1.23/lib/${arch}
-
+cp /app/.local/lib/swipl-7.1.23/lib/${arch}/*.so ${build}
+${swipl} -o /app/splunge -c main.pl -g go -t prolog
 echo "-----> Build succeeded"
 
