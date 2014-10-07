@@ -21,6 +21,42 @@ ID=${SWI_BRANCH}
 tarball=${ID}.tgz
 PROFILE=${HOME}/.profile.d
 
+# First though, do we have unixodbc?
+echo "------> Checking for unixODBC"
+(
+    test -f ${cache}/unixodbc.tgz && exit
+    echo "-------> Fetching unixODBC"
+    mkdir -p ${build}/unixodbc-build
+    cd ${build}/unixodbc-build
+    # The ftp.unixodbc.org site no longer resolves for me?
+    curl ftp://mirror.ovh.net/gentoo-distfiles/distfiles/unixODBC-2.3.2.tar.gz -s -o - | tar -zx -f -
+    cd unixODBC-2.3.2
+    ./configure --prefix=/app/.odbc && make && make install
+    cd /app
+    tar -czf ${cache}/unixodbc.tgz .odbc
+)
+echo "------> Unpacking unixODBC"
+cd /app
+tar -xzf ${cache}/unixodbc.tgz
+
+# Next (and independently of that): Do we have psqlodbc?
+echo "------> Checking for psqlodbc"
+(
+    test -f ${cache}/psqlodbc.tgz && exit
+    echo "------> Fetching psqlodbc"
+    mkdir -p ${build}/psqlodbc-build
+    cd ${build}/psqlodbc-build 
+    curl http://ftp.postgresql.org/pub/odbc/versions/src/psqlodbc-09.01.0200.tar.gz -s -o - | tar -zx -f -
+    cd psqlodbc-09.01.0200
+    ./configure --prefix=/app/.psqlodbc --with-unixodbc=/app/.odbc --without-libpq && make && make install
+    cd /app
+    tar -czf ${cache}/psqlodbc.tgz
+)
+echo "------> Unpacking psqlodbc"
+cd /app
+tar -xzf ${cache}/psqlodbc.tgz
+
+
 echo "-----> Using SWI Prolog version ${ID}"
 (
     set -e
@@ -29,23 +65,6 @@ echo "-----> Using SWI Prolog version ${ID}"
     # Already got a servicable build of SWI-Prolog?
     test -f ${cache}/swipl-${ID}.tgz && exit
     # Otherwise, we must compile one.
-    # First though, do we have unixodbc?
-    echo "------> Checking for unixODBC"
-    (
-        test -f ${cache}/unixodbc.tgz && exit
-        echo "-------> Fetching unixODBC"
-        mkdir -p ${build}/unixodbc-build
-        cd ${build}/unixodbc-build
-        # The ftp.unixodbc.org site no longer resolves for me?
-        curl ftp://mirror.ovh.net/gentoo-distfiles/distfiles/unixODBC-2.3.2.tar.gz -s -o - | tar -zx -f -
-        cd unixODBC-2.3.2
-        ./configure --prefix=/app/.odbc && make && make install
-        cd /app
-        tar -czf ${cache}/unixodbc.tgz .odbc
-    )
-    echo "------> Unpacking unixODBC"
-    cd /app
-    tar -xzf ${cache}/unixodbc.tgz
     
     # Build Prolog in ${build}/swipl-build, and install to /app/.swipl then compress
     # /app/.swipl to ${cache}/swipl-${ID}.tgz
@@ -74,22 +93,7 @@ echo "-----> Using SWI Prolog version ${ID}"
     rm -rf /app/.swipl
     echo "-------> Installed SWI Prolog ${ID}"
 )
-# Next (and independently of that): Do we have psqlodbc?
-echo "------> Checking for psqlodbc"
-(
-    test -f ${cache}/psqlodbc.tgz && exit
-    echo "------> Fetching psqlodbc"
-    mkdir -p ${build}/psqlodbc-build
-    cd ${build}/psqlodbc-build 
-    curl http://ftp.postgresql.org/pub/odbc/versions/src/psqlodbc-09.01.0200.tar.gz -s -o - | tar -zx -f -
-    cd psqlodbc-09.01.0200
-    ./configure --prefix=/app/.psqlodbc --with-unixodbc=/app/.odbc --without-libpq && make && make install
-    cd /app
-    tar -czf ${cache}/psqlodbc.tgz
-)
-echo "------> Unpacking psqlodbc"
-cd /app
-tar -xzf ${cache}/psqlodbc.tgz
+
 
 
 echo "-----> Found SWI Prolog version ${ID} ready for use in ${cache}/swipl-${ID}.tgz. Unpacking..."
