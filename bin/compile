@@ -48,10 +48,13 @@ echo "------> Checking for psqlodbc"
     cd ${build}/psqlodbc-build 
     curl http://ftp.postgresql.org/pub/odbc/versions/src/psqlodbc-09.01.0200.tar.gz -s -o - | tar -zx -f -
     cd psqlodbc-09.01.0200
-    ./configure --prefix=/app/.psqlodbc --with-unixodbc=/app/.odbc --without-libpq && make && make install
+    ./configure --prefix=/app/.psqlodbc --with-unixodbc=/app/.odbc --without-libpq || true
+    cat config.log
+    make && make install
     cd /app
     tar -czf ${cache}/psqlodbc.tgz
 )
+exit 8
 echo "------> Unpacking psqlodbc"
 cd /app
 tar -xzf ${cache}/psqlodbc.tgz
