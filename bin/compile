@@ -10,61 +10,121 @@ build=$(cd "$1/" && pwd)
 test -z ${build} && exit
 cache=$(cd "$2/" && pwd)
 test -z ${cache} && exit
-DEFAULT_SWI_VERSION="master"
 if [ -f ${build}/.preferred_swi_version ]; then
     SWI_VERSION=$(cat ${build}/.preferred_swi_version)
+    SWI_BRANCH="V${SWI_VERSION}"
+else
+    SWI_VERSION="7.1.23"
+    SWI_BRANCH="V7.1.23"
 fi
-ver=${SWI_VERSION:=${DEFAULT_SWI_VERSION}}
-tarball=${ver}.tgz
+ID=${SWI_BRANCH}
+tarball=${ID}.tgz
 PROFILE=${HOME}/.profile.d
 
-echo "-----> Using SWI Prolog version $ver"
+echo "-----> Using SWI Prolog version ${ID}"
 (
     set -e
     # We MUST do this or git will go bezerk when we try to do anything to the checked-out SWI repository
     unset GIT_DIR
     # Already got a servicable build of SWI-Prolog?
-    test -f ${cache}/swipl-${ver}.tgz && exit
-    # Otherwise, we must compile one. Build it in ${build}/swipl-build, and install to /app/.local then compress
-    # /app/.local to ${cache}/swipl-${ver}.tgz
+    test -f ${cache}/swipl-${ID}.tgz && exit
+    # Otherwise, we must compile one.
+    # First though, do we have unixodbc?
+    echo "------> Checking for unixODBC"
+    (
+        test -f ${cache}/unixodbc.tgz && exit
+        echo "-------> Fetching unixODBC"
+        mkdir -p ${build}/unixodbc-build
+        cd ${build}/unixodbc-build
+        # The ftp.unixodbc.org site no longer resolves for me?
+        curl ftp://mirror.ovh.net/gentoo-distfiles/distfiles/unixODBC-2.3.2.tar.gz -s -o - | tar -zx -f -
+        cd unixODBC-2.3.2
+        ./configure --prefix=/app/.odbc && make && make install
+        cd /app
+        tar -czf ${cache}/unixodbc.tgz .odbc
+    )
+    echo "------> Unpacking unixODBC"
+    cd /app
+    tar -xzf ${cache}/unixodbc.tgz
+
+    # Next: Do we have psqlodbc?
+    echo "------> Checking for psqlodbc"
+    (
+        test -f ${cache}/psqlodbc.tgz && exit
+        echo "------> Fetching psqlodbc"
+        mkdir -p ${build}/psqlodbc-build
+        cd ${build}/psqlodbc-build 
+        curl http://ftp.postgresql.org/pub/odbc/versions/src/psqlodbc-09.01.0200.tar.gz -s -o - | tar -zx -f -
+        cd psqlodbc-09.01.0200
+        ./configure --prefix=/app/.psqlodbc --with-unixodbc=/app/.odbc --without-libpq && make && make install
+        cd /app
+        tar -czf ${cache}/psqlodbc.tgz
+    )
+    echo "------> Unpacking psqlodbc"
+    cd /app
+    tar -xzf ${cache}/psqlodbc.tgz
+    
+    # Build Prolog in ${build}/swipl-build, and install to /app/.swipl then compress
+    # /app/.swipl to ${cache}/swipl-${ID}.tgz
     rm -rf ${build}/swipl-build
     mkdir -p ${build}/swipl-build
     cd ${build}/swipl-build
     echo "-------> Fetching SWI Prolog from git"
-    git clone --branch ${ver} https://github.com/SWI-Prolog/swipl-devel.git
+    git clone --branch ${ID} https://github.com/SWI-Prolog/swipl-devel.git
     cd swipl-devel
-    echo "-------> Switching to version ${ver}"
-    git checkout ${ver}
-    echo "-------> Building SWI Prolog $ver in ${build}/swipl-build"
+    echo "-------> Switching to version ${ID}"
+    git checkout ${ID}
+    echo "-------> Building SWI Prolog ${ID} in ${build}/swipl-build"
     # First apply a very small patch so we can compile on Cedar. This seems to be harmless. Hopefully.
     sed -i -e 's@2.66@2.65@g' src/configure.in
     # Prepare the build
     ./prepare --yes --all --man
     # Configure and build it
-    ./configure --with-world --prefix=/app/.local && make || exit 1
-    echo "-------> Installing SWI Prolog $ver"
+    ./configure --with-world --with-unixodbc=/app/.odbc --prefix=/app/.swipl && make || exit 1
+    echo "-------> Installing SWI Prolog ${ID}"
     make install || exit 1
     cd /app
-    tar -czf ${cache}/swipl-${ver}.tgz .local
+    tar -czf ${cache}/swipl-${ID}.tgz .swipl
     ls -la ${cache}
     # Now clean up
     rm -rf ${build}/swipl-build
-    rm -rf /app/.local
-    echo "-------> Installed SWI Prolog $ver"
+    rm -rf /app/.swipl
+    echo "-------> Installed SWI Prolog ${ID}"
 )
-echo "-----> Found SWI Prolog version $ver ready for use in ${cache}/swipl-${ver}.tgz. Unpacking..."
+echo "-----> Found SWI Prolog version ${ID} ready for use in ${cache}/swipl-${ID}.tgz. Unpacking..."
 cd /app
-tar -xzf ${cache}/swipl-${ver}.tgz
-PATH=${cache}/.local/bin:$PATH
+tar -xzf ${cache}/swipl-${ID}.tgz
+PATH=${cache}/.swipl/bin:$PATH
 export PATH
 
 echo "-----> Compiling slug"
 cd $build
-swipl="/app/.local/bin/swipl"
+swipl="/app/.swipl/bin/swipl"
 arch=$(${swipl} --arch)
-cp -r /app/.local ${build}/
-PATH=$PATH:/app/.local/bin
-#eval `${swipl} -q --dump-runtime-variables`
-/app/.local/bin/swipl -q -o ${build}/splunge -g go -t prolog --stand_alone=true -c main.pl
+cp -r /app/.swipl ${build}/
+cp -r /app/.odbc ${build}/
+cp -r /app/.psqlodbc ${build}/
+# Configure unixodbc
+cat <<EOF > /app/.odbc/etc/odbcinst.ini
+[ODBC Drivers]
+PostgreSQL = Installed
+
+[PostgreSQL]
+Driver = /app/.psqlodbc/lib/psqlodbcw.so
+Debug = 0
+
+EOF
+
+PATH=$PATH:/app/.swipl/bin
+/app/.swipl/bin/swipl -q -o ${build}/splunge -g go -t prolog --stand_alone=true -c main.pl
 echo "-----> Build succeeded"
+
+
+# To do:
+#   Compile ODBC so we can use it
+#   Compile psqlodbc
+#   Compile CQL so we can use ODBC
+#   Either compile everything in src/*.pl or use a Manifest file
+#   Make the toplevel goal '$heroku':heroku/0
+#   heroku/0 should start a web server on the right port and wait for a message
 
