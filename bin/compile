@@ -20,6 +20,7 @@ PROFILE=${HOME}/.profile.d
 
 echo "Build: ${build}"
 echo "Cache: ${cache}"
+ls -la ${cache}
 exit 7
 
 echo "-----> Using SWI Prolog version $ver"
