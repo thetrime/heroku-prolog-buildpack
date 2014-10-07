@@ -64,12 +64,9 @@ cd $build
 pwd
 swipl="/app/.local/bin/swipl"
 arch=$(${swipl} --arch)
-cp /app/.local/lib/swipl-7.1.23/lib/${arch}/*.so ${build}/
-#/app/.local/bin/swipl -o ${build}/splunge -g go -t prolog --stand_alone=true -c main.pl
+cp -r /app/.local ${build}/
 PATH=$PATH:/app/.local/bin
 eval `${swipl} --dump-runtime-vars`
-export LD_RUN_PATH=/app
-echo "Run path: $LD_RUN_PATH"
-swipl-ld -t prolog -v -g go -o splunge main.c main.pl
+/app/.local/bin/swipl -o ${build}/splunge -g go -t prolog --stand_alone=true -c main.pl
 echo "-----> Build succeeded"
 
