@@ -48,21 +48,21 @@ echo "-----> Using SWI Prolog version ${ID}"
     tar -xzf ${cache}/unixodbc.tgz
 
     # Next: Do we have psqlodbc?
-    echo "------> Checking for psqlodbc"
-    (
-        test -f ${cache}/psqlodbc.tgz && exit
-        echo "------> Fetching psqlodbc"
-        mkdir -p ${build}/psqlodbc-build
-        cd ${build}/psqlodbc-build 
-        curl http://ftp.postgresql.org/pub/odbc/versions/src/psqlodbc-09.01.0200.tar.gz -s -o - | tar -zx -f -
-        cd psqlodbc-09.01.0200
-        ./configure --prefix=/app/.psqlodbc --with-unixodbc=/app/.odbc --without-libpq && make && make install
-        cd /app
-        tar -czf ${cache}/psqlodbc.tgz
-    )
-    echo "------> Unpacking psqlodbc"
-    cd /app
-    tar -xzf ${cache}/psqlodbc.tgz
+#    echo "------> Checking for psqlodbc"
+#    (
+#        test -f ${cache}/psqlodbc.tgz && exit
+#        echo "------> Fetching psqlodbc"
+#        mkdir -p ${build}/psqlodbc-build
+#        cd ${build}/psqlodbc-build 
+#        curl http://ftp.postgresql.org/pub/odbc/versions/src/psqlodbc-09.01.0200.tar.gz -s -o - | tar -zx -f -
+#        cd psqlodbc-09.01.0200
+#        ./configure --prefix=/app/.psqlodbc --with-unixodbc=/app/.odbc --without-libpq && make && make install
+#        cd /app
+#        tar -czf ${cache}/psqlodbc.tgz
+#    )
+#    echo "------> Unpacking psqlodbc"
+#    cd /app
+#    tar -xzf ${cache}/psqlodbc.tgz
     
     # Build Prolog in ${build}/swipl-build, and install to /app/.swipl then compress
     # /app/.swipl to ${cache}/swipl-${ID}.tgz
