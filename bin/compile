@@ -65,10 +65,9 @@ pwd
 swipl="/app/.local/bin/swipl"
 echo ${swipl} -o splunge -c main.pl -g go -t prolog
 ${swipl} -o splunge -c main.pl -g go -t prolog
-
 arch=$(${swipl} --arch)
-
-ls /app/.local/lib/swipl-7.1.23/${arch}
+ls /app/.local/lib/swipl-7.1.23/lib
+ls /app/.local/lib/swipl-7.1.23/lib/${arch}
 
 echo "-----> Build succeeded"
 
