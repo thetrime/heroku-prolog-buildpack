@@ -103,7 +103,7 @@ swipl="/app/.swipl/bin/swipl"
 arch=$(${swipl} --arch)
 cp -r /app/.swipl ${build}/
 cp -r /app/.odbc ${build}/
-cp -r /app/.psqlodbc ${build}/
+#cp -r /app/.psqlodbc ${build}/
 # Configure unixodbc
 cat <<EOF > /app/.odbc/etc/odbcinst.ini
 [ODBC Drivers]
