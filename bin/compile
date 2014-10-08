@@ -137,6 +137,4 @@ echo "-----> Build succeeded"
 # To do:
 #   Compile CQL so we can use ODBC
 #   Either compile everything in src/*.pl or use a Manifest file
-#   Make the toplevel goal '$heroku':heroku/0
-#   heroku/0 should start a web server on the right port and wait for a message
 
