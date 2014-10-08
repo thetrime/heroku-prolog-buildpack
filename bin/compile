@@ -41,6 +41,23 @@ echo "------> Unpacking unixODBC"
 cd /app
 tar -xzf ${cache}/unixodbc.tgz
 
+# Then: Do we have gmp?
+echo "------> Checking for gmp"
+(
+    test -f ${cache}/gmp.tgz && exit
+    echo "------> Fetching gmp"
+    mkdir -p ${build}/gmp-build
+    cd ${build}/gmp-build
+    curl https://ftp.gnu.org/gnu/gmp/gmp-6.0.0a.tar.bz2 -s -o - | tar -jx -f -
+    cd gmp-6.0.0a
+    ./configure --prefix=/app/.gmp && make && make install
+    cd /app
+    tar -czf ${cache}/gmp.tgz .gmp
+)
+echo "------> Unpacking gmp"
+cd /app
+tar -zxf ${cache}/gmp.tgz
+
 # Next: Do we have psqlodbc?
 echo "------> Checking for psqlodbc"
 (
@@ -89,7 +106,8 @@ echo "-----> Checking for SWI Prolog version ${ID}"
     ./prepare --yes --all --man
     # Configure and build it
     export LD_RUN_PATH=/app/.odbc/lib
-    export LDFLAGS="$LDFLAGS -LLIBDIR -Wl,-rpath=/app/.odbc/lib"
+    export LDFLAGS="$LDFLAGS -LLIBDIR -Wl,-rpath=/app/.odbc/lib -L/app/.gmp/lib -Wl,-rpath=/app/.gmp/lib"
+    export CFLAGS="$CFLAGS -I/app/.gmp/include"
     echo "LD_RUN_PATH = $LD_RUN_PATH"   
     ./configure --with-world --with-odbc=/app/.odbc --prefix=/app/.swipl && make
     echo "-------> Installing SWI Prolog ${ID}"
@@ -147,4 +165,4 @@ echo "-----> Build succeeded"
 # To do:
 #   Compile CQL so we can use ODBC
 #   Either compile everything in src/*.pl or use a Manifest file
-
+#   Compile GMP
