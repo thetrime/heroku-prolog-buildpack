@@ -23,6 +23,10 @@ ID=${SWI_BRANCH}
 tarball=${ID}.tgz
 PROFILE=${HOME}/.profile.d
 
+# Testing: Recompile all
+rm ${cache}/*.tgz
+
+
 # First though, do we have unixodbc?
 echo "------> Checking for unixODBC"
 (
@@ -33,9 +37,14 @@ echo "------> Checking for unixODBC"
     # The ftp.unixodbc.org site no longer resolves for me?
     curl ftp://mirror.ovh.net/gentoo-distfiles/distfiles/unixODBC-2.3.2.tar.gz -s -o - | tar -zx -f -
     cd unixODBC-2.3.2
-    ./configure --prefix=/app/.odbc && make && make install
+    echo "------> Compiling unixODBC"
+    ./configure --prefix=/app/.odbc > /dev/null 2>&1
+    make > /dev/null 2>&1
+    make install > /dev/null 2>&1
     cd /app
     tar -czf ${cache}/unixodbc.tgz .odbc
+    rm -rf ${build}/unixodbc-build
+    rm -rf /app/.odbc
 )
 echo "------> Unpacking unixODBC"
 cd /app
@@ -50,9 +59,14 @@ echo "------> Checking for gmp"
     cd ${build}/gmp-build
     curl https://ftp.gnu.org/gnu/gmp/gmp-6.0.0a.tar.bz2 -s -o - | tar -jx -f -
     cd gmp-6.0.0
-    ./configure --prefix=/app/.gmp && make && make install
+    echo "------> Compiling gmp"
+    ./configure --prefix=/app/.gmp > /dev/null 2>&1
+    make > /dev/null 2>&1
+    make install > /dev/null 2>&1
     cd /app
     tar -czf ${cache}/gmp.tgz .gmp
+    rm -rf ${build}/gmp-build
+    rm -rf /app/.gmp
 )
 echo "------> Unpacking gmp"
 cd /app
@@ -67,19 +81,20 @@ echo "------> Checking for psqlodbc"
     cd ${build}/psqlodbc-build 
     curl http://ftp.postgresql.org/pub/odbc/versions/src/psqlodbc-09.01.0200.tar.gz -s -o - | tar -zx -f -
     cd psqlodbc-09.01.0200
-    LD_LIBRARY_PATH=/app/.odbc/lib ./configure --prefix=/app/.psqlodbc --with-unixodbc=/app/.odbc --without-libpq || true
-    cat config.log
-    make && make install
+    echo "------> Compiling psqlodbc"
+    LD_LIBRARY_PATH=/app/.odbc/lib ./configure --prefix=/app/.psqlodbc --with-unixodbc=/app/.odbc --without-libpq > /dev/null 2>&1
+    make > /dev/null 2>&1
+    make install > /dev/null 2>&1
     cd /app
     tar -czf ${cache}/psqlodbc.tgz .psqlodbc
+    rm -rf ${build]/psqlodbc-build
+    rm -rf /app/.psqlodbc
 )
 echo "------> Unpacking psqlodbc"
 cd /app
 tar -xzf ${cache}/psqlodbc.tgz
 
 # Finally: Prolog
-echo "Deleting Prolog"
-rm ${cache}/swipl-${ID}.tgz
 echo "-----> Checking for SWI Prolog version ${ID}"
 (
     set -e
@@ -95,41 +110,39 @@ echo "-----> Checking for SWI Prolog version ${ID}"
     mkdir -p ${build}/swipl-build
     cd ${build}/swipl-build
     echo "-------> Fetching SWI Prolog from git"
-    git clone --branch ${ID} https://github.com/SWI-Prolog/swipl-devel.git
+    git clone --branch ${ID} https://github.com/SWI-Prolog/swipl-devel.git > /dev/null 2>&1
     cd swipl-devel
     echo "-------> Switching to version ${ID}"
-    git checkout ${ID}
+    git checkout ${ID} > /dev/null 2>&1
     echo "-------> Building SWI Prolog ${ID} in ${build}/swipl-build"
     # First apply a very small patch so we can compile on Cedar. This seems to be harmless. Hopefully.
     sed -i -e 's@2.66@2.65@g' src/configure.in
     # Prepare the build
-    ./prepare --yes --all --man
+    ./prepare --yes --all --man > /dev/null 2>&1
     # Configure and build it
     export LD_RUN_PATH=/app/.odbc/lib
     export LDFLAGS="$LDFLAGS -LLIBDIR -Wl,-rpath=/app/.odbc/lib -L/app/.gmp/lib -Wl,-rpath=/app/.gmp/lib"
     export CFLAGS="$CFLAGS -I/app/.gmp/include"
     echo "LD_RUN_PATH = $LD_RUN_PATH"   
-    ./configure --with-world --with-odbc=/app/.odbc --prefix=/app/.swipl && make
+    ./configure --with-world --with-odbc=/app/.odbc --prefix=/app/.swipl > /dev/null 2>&1
+    make > /dev/null 2>&1
     echo "-------> Installing SWI Prolog ${ID}"
-    make install
+    make install > /dev/null 2>&1
     echo "------> Preparing CQL"
     (
         test -f packages/cql && exit
         cd packages
-        git clone https://github.com/SWI-Prolog/packages-cql.git    
+        git clone https://github.com/SWI-Prolog/packages-cql.git > /dev/null 2>&1
         cd packages-cql
-        make install
+        make install > /dev/null 2>&1
     )
     cd /app
     tar -czf ${cache}/swipl-${ID}.tgz .swipl
-    ls -la ${cache}
     # Now clean up
     rm -rf ${build}/swipl-build
     rm -rf /app/.swipl
     echo "-------> Installed SWI Prolog ${ID}"
 )
-
-
 
 echo "-----> Found SWI Prolog version ${ID} ready for use in ${cache}/swipl-${ID}.tgz. Unpacking..."
 cd /app
@@ -144,6 +157,7 @@ arch=$(${swipl} --arch)
 cp -r /app/.swipl ${build}/
 cp -r /app/.odbc ${build}/
 cp -r /app/.psqlodbc ${build}/
+cp -r /app/.gmp ${build}/
 # Configure unixodbc
 echo "-----> Configuring unixodbc for PostgreSQL support"
 cat << 'EOF' > ${build}/.odbc/etc/odbcinst.ini
@@ -164,4 +178,4 @@ echo "-----> Build succeeded"
 
 # To do:
 #   Either compile everything in src/*.pl or use a Manifest file
-#   Compile GMP
+#   Silence compilation output of dependencies
