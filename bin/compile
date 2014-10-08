@@ -58,7 +58,7 @@ echo "------> Unpacking psqlodbc"
 cd /app
 tar -xzf ${cache}/psqlodbc.tgz
 
-
+rm ${cache}/swipl-${ID}.tgz # FIXME: Testing only
 echo "-----> Using SWI Prolog version ${ID}"
 (
     set -e
@@ -84,7 +84,7 @@ echo "-----> Using SWI Prolog version ${ID}"
     # Prepare the build
     ./prepare --yes --all --man
     # Configure and build it
-    ./configure --with-world --with-odbc=/app/.odbc --prefix=/app/.swipl && make || exit 1
+    LD_LIBRARY_PATH=/app/.odbc/lib ./configure --with-world --with-odbc=/app/.odbc --prefix=/app/.swipl && make || exit 1
     echo "-------> Installing SWI Prolog ${ID}"
     make install || exit 1
     cd /app
@@ -129,8 +129,7 @@ echo "-----> Build succeeded"
 
 
 # To do:
-#   Compile ODBC so we can use it
-#   Compile psqlodbc
+#   Fix compilation of odbc4pl to correctly find unixodbc
 #   Compile CQL so we can use ODBC
 #   Either compile everything in src/*.pl or use a Manifest file
 #   Make the toplevel goal '$heroku':heroku/0
