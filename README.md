@@ -18,7 +18,7 @@ Xpce and libarchive are not currently included because of missing dependencies, 
 
 To do:
 ------
-Provide a mechanism for generating/upgrading a database schema based on facts. Currently you must create the database yourself (somehow?)
-Is -c the best approach? Perhaps it'd be better to create a lot of qlfs in the cache, then have a process that combines them all into a PRA. This would be much more efficient for larger applications
-Probably should provide libarchive - it's not likely to be that tricky
+   * Provide a mechanism for generating/upgrading a database schema based on facts. Currently you must create the database yourself (somehow?)
+   * Is -c the best approach? Perhaps it'd be better to create a lot of qlfs in the cache, then have a process that combines them all into a PRA. This would be much more efficient for larger applications
+   * Probably should provide libarchive - it's not likely to be that tricky
 
