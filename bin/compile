@@ -22,6 +22,7 @@ tarball=${ID}.tgz
 PROFILE=${HOME}/.profile.d
 
 # First though, do we have unixodbc?
+rm ${cache}/unixodbc.tgz
 echo "------> Checking for unixODBC"
 (
     test -f ${cache}/unixodbc.tgz && exit
@@ -58,7 +59,7 @@ echo "------> Unpacking psqlodbc"
 cd /app
 tar -xzf ${cache}/psqlodbc.tgz
 
-rm ${cache}/swipl-${ID}.tgz # FIXME: Testing only
+#rm ${cache}/swipl-${ID}.tgz # FIXME: Testing only
 echo "-----> Using SWI Prolog version ${ID}"
 (
     set -e
