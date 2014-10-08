@@ -49,7 +49,7 @@ echo "------> Checking for gmp"
     mkdir -p ${build}/gmp-build
     cd ${build}/gmp-build
     curl https://ftp.gnu.org/gnu/gmp/gmp-6.0.0a.tar.bz2 -s -o - | tar -jx -f -
-    cd gmp-6.0.0a
+    cd gmp-6.0.0
     ./configure --prefix=/app/.gmp && make && make install
     cd /app
     tar -czf ${cache}/gmp.tgz .gmp
