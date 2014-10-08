@@ -22,7 +22,6 @@ tarball=${ID}.tgz
 PROFILE=${HOME}/.profile.d
 
 # First though, do we have unixodbc?
-#rm ${cache}/unixodbc.tgz
 echo "------> Checking for unixODBC"
 (
     test -f ${cache}/unixodbc.tgz && exit
@@ -40,7 +39,7 @@ echo "------> Unpacking unixODBC"
 cd /app
 tar -xzf ${cache}/unixodbc.tgz
 
-# Next (and independently of that): Do we have psqlodbc?
+# Next: Do we have psqlodbc?
 echo "------> Checking for psqlodbc"
 (
     test -f ${cache}/psqlodbc.tgz && exit
@@ -59,8 +58,8 @@ echo "------> Unpacking psqlodbc"
 cd /app
 tar -xzf ${cache}/psqlodbc.tgz
 
-rm ${cache}/swipl-${ID}.tgz # FIXME: Testing only
-echo "-----> Using SWI Prolog version ${ID}"
+# Finally: Prolog
+echo "-----> Checking for SWI Prolog version ${ID}"
 (
     set -e
     # We MUST do this or git will go bezerk when we try to do anything to the checked-out SWI repository
@@ -128,12 +127,15 @@ Debug = 0
 EOF
 
 PATH=$PATH:/app/.swipl/bin
-/app/.swipl/bin/swipl -q -o ${build}/splunge -g go -t prolog --stand_alone=true -c main.pl
+ls -l /
+ls -l /app
+ls -l ${build}
+
+/app/.swipl/bin/swipl -q -o ${build}/splunge -g heroku -t prolog --stand_alone=true -c heroku.pl main.pl
 echo "-----> Build succeeded"
 
 
 # To do:
-#   Fix compilation of odbc4pl to correctly find unixodbc
 #   Compile CQL so we can use ODBC
 #   Either compile everything in src/*.pl or use a Manifest file
 #   Make the toplevel goal '$heroku':heroku/0
