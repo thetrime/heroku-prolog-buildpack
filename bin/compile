@@ -61,6 +61,7 @@ cd /app
 tar -xzf ${cache}/psqlodbc.tgz
 
 # Finally: Prolog
+rm ${cache}/swipl-${ID}.tgz
 echo "-----> Checking for SWI Prolog version ${ID}"
 (
     set -e
@@ -89,9 +90,17 @@ echo "-----> Checking for SWI Prolog version ${ID}"
     export LD_RUN_PATH=/app/.odbc/lib
     export LDFLAGS="$LDFLAGS -LLIBDIR -Wl,-rpath=/app/.odbc/lib"
     echo "LD_RUN_PATH = $LD_RUN_PATH"   
-    ./configure --with-world --with-odbc=/app/.odbc --prefix=/app/.swipl && make || exit 1
+    ./configure --with-world --with-odbc=/app/.odbc --prefix=/app/.swipl && make
     echo "-------> Installing SWI Prolog ${ID}"
-    make install || exit 1
+    make install
+    echo "------> Preparing CQL"
+    (
+        test -f packages/cql && exit
+        cd packages
+        git clone https://github.com/SWI-Prolog/packages-cql.git    
+        cd cql
+        make install
+    )
     cd /app
     tar -czf ${cache}/swipl-${ID}.tgz .swipl
     ls -la ${cache}
@@ -130,7 +139,7 @@ EOF
 
 PATH=$PATH:/app/.swipl/bin
 cp ${OPT_DIR}/heroku.pl .
-/app/.swipl/bin/swipl -q -o ${build}/splunge -g heroku -t prolog --stand_alone=true -c heroku.pl main.pl
+/app/.swipl/bin/swipl -q -o ${build}/swipl-heroku -g heroku -t prolog --stand_alone=true -c *.pl
 echo "-----> Build succeeded"
 
 
