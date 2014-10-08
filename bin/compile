@@ -171,7 +171,12 @@ EOF
 
 PATH=$PATH:/app/.swipl/bin
 cp ${OPT_DIR}/heroku.pl .
-/app/.swipl/bin/swipl -q -o ${build}/swipl-heroku -g heroku -t prolog --stand_alone=true -c *.pl
+SOURCES="heroku.pl $(cat$ {build}/swipl.manifest)"
+if [[ "z${MANIFEST}" == "z" ]]; then
+   SOURCES="*.pl"
+fi
+
+/app/.swipl/bin/swipl -q -o ${build}/swipl-heroku -g heroku -t prolog --stand_alone=true -c ${MANIFEST}
 echo "-----> Build succeeded"
 
 
