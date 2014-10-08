@@ -112,6 +112,7 @@ cp -r /app/.swipl ${build}/
 cp -r /app/.odbc ${build}/
 cp -r /app/.psqlodbc ${build}/
 # Configure unixodbc
+echo "-----> Configuring unixodbc for PostgreSQL support"
 cat << 'EOF' > /app/.odbc/etc/odbcinst.ini
 [ODBC Drivers]
 PostgreSQL = Installed
