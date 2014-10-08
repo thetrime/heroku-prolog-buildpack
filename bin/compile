@@ -4,8 +4,12 @@
 # usage: bin/compile <build-dir> <cache-dir>
 
 set -e
+BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
+OPT_DIR=$(cd "$BIN_DIR/../opt"; pwd)
+echo ${OPT_DIR}
+ls -l ${OPT_DIR}
+exit 7
 bpdir=$(cd $(dirname $(dirname $0)); pwd)
-optdir=$(cd "$bpdir/../opt"; pwd)
 mkdir -p "$1" "$2"
 build=$(cd "$1/" && pwd)
 test -z ${build} && exit
