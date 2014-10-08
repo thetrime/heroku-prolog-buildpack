@@ -173,9 +173,10 @@ PATH=$PATH:/app/.swipl/bin
 cp ${OPT_DIR}/heroku.pl .
 SOURCES="heroku.pl $(cat ${build}/swipl.manifest)"
 if [[ "z${MANIFEST}" == "z" ]]; then
+   echo "------> Compiling all .pl files in root directory"
    SOURCES="*.pl"
 fi
 
-/app/.swipl/bin/swipl -q -o ${build}/swipl-heroku -g heroku -t prolog --stand_alone=true -c ${MANIFEST}
+/app/.swipl/bin/swipl -q -o ${build}/swipl-heroku -g heroku -t prolog --stand_alone=true -c ${SOURCES}
 echo "-----> Build succeeded"
 
