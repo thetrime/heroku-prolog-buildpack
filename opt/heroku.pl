@@ -1,4 +1,5 @@
-:-module('$heroku', [heroku/0]).
+:-module('$heroku', [heroku/0,
+                     heroku_db_connect/1]).
 
 :- use_module(library(http/thread_httpd)).
 :- use_module(library(http/http_dispatch)).
@@ -10,7 +11,7 @@ heroku:-
         prolog,
 	thread_get_message(_).
 
-db_connect:-
+heroku_db_connect(Connection):-
         ( getenv('DATABASE_URL', Url)->
             true
         ; otherwise->            
@@ -35,7 +36,5 @@ db_connect:-
         sub_atom(DbNameWithSlash, 1, _, 0, DbName),
         atomic_list_concat([User, Pass], ':', UserAndPass),
         format(atom(DriverString), 'Driver={PostgreSQL};UID=~w;PWD=~w;Server=~w;Port=~w;Database=~w', [User, Pass, Hostname, Port, DbName]),
-        odbc_connect(-, Connection, [driver_string(DriverString)]),
-        writeln(Connection).
-
+        odbc_connect(-, Connection, [driver_string(DriverString)]).
                    
