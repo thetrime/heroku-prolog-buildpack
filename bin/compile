@@ -86,7 +86,8 @@ echo "-----> Using SWI Prolog version ${ID}"
     ./prepare --yes --all --man
     # Configure and build it
     export LD_RUN_PATH=/app/.odbc/lib
-    export LDFLAGS="$LDFLAGS -LLIBDIR"
+    export LDFLAGS="$LDFLAGS -LLIBDIR -Wl, -R/app/.odbc/lib"
+    echo "LD_RUN_PATH = $LD_RUN_PATH"   
     ./configure --with-world --with-odbc=/app/.odbc --prefix=/app/.swipl && make || exit 1
     echo "-------> Installing SWI Prolog ${ID}"
     make install || exit 1
