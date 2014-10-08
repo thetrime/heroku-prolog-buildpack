@@ -58,7 +58,6 @@ echo "------> Unpacking psqlodbc"
 cd /app
 tar -xzf ${cache}/psqlodbc.tgz
 
-rm ${cache}/swipl-${ID}.tgz # FIXME: Testing only
 echo "-----> Using SWI Prolog version ${ID}"
 (
     set -e
@@ -84,7 +83,7 @@ echo "-----> Using SWI Prolog version ${ID}"
     # Prepare the build
     ./prepare --yes --all --man
     # Configure and build it
-    LD_LIBRARY_PATH=/app/.odbc/lib ./configure --with-world --with-odbc=/app/.odbc --prefix=/app/.swipl && make || exit 1
+    ./configure --with-world --with-odbc=/app/.odbc --prefix=/app/.swipl && make || exit 1
     echo "-------> Installing SWI Prolog ${ID}"
     make install || exit 1
     cd /app
@@ -124,6 +123,7 @@ Debug = 0
 EOF
 
 PATH=$PATH:/app/.swipl/bin
+export LD_LIBRARY_PATH=/app/.odbc/lib
 /app/.swipl/bin/swipl -q -o ${build}/splunge -g go -t prolog --stand_alone=true -c main.pl
 echo "-----> Build succeeded"
 
