@@ -24,7 +24,7 @@ tarball=${ID}.tgz
 PROFILE=${HOME}/.profile.d
 
 # Testing: Recompile all
-rm ${cache}/*.tgz
+# rm ${cache}/*.tgz
 
 
 # First though, do we have unixodbc?
@@ -123,7 +123,6 @@ echo "-----> Checking for SWI Prolog version ${ID}"
     export LD_RUN_PATH=/app/.odbc/lib
     export LDFLAGS="$LDFLAGS -LLIBDIR -Wl,-rpath=/app/.odbc/lib -L/app/.gmp/lib -Wl,-rpath=/app/.gmp/lib"
     export CFLAGS="$CFLAGS -I/app/.gmp/include"
-    echo "LD_RUN_PATH = $LD_RUN_PATH"   
     ./configure --with-world --with-odbc=/app/.odbc --prefix=/app/.swipl > /dev/null 2>&1
     make > /dev/null 2>&1
     echo "------> Installing SWI Prolog ${ID}"
@@ -178,4 +177,3 @@ echo "-----> Build succeeded"
 
 # To do:
 #   Either compile everything in src/*.pl or use a Manifest file
-#   Silence compilation output of dependencies
