@@ -134,7 +134,7 @@ ls -l ${build}
 ls -l ${cache}
 echo "bpdir: ${bpdir}"
 echo "optdir: ${optdir}"
-ls -l /app/tmp
+find /app
 
 /app/.swipl/bin/swipl -q -o ${build}/splunge -g heroku -t prolog --stand_alone=true -c heroku.pl main.pl
 echo "-----> Build succeeded"
