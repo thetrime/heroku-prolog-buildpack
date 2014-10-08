@@ -163,6 +163,5 @@ echo "-----> Build succeeded"
 
 
 # To do:
-#   Compile CQL so we can use ODBC
 #   Either compile everything in src/*.pl or use a Manifest file
 #   Compile GMP
