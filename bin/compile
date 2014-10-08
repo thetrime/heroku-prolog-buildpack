@@ -5,6 +5,7 @@
 
 set -e
 bpdir=$(cd $(dirname $(dirname $0)); pwd)
+optdir=$(cd "$bpdir/../opt"; pwd)
 mkdir -p "$1" "$2"
 build=$(cd "$1/" && pwd)
 test -z ${build} && exit
@@ -130,6 +131,10 @@ PATH=$PATH:/app/.swipl/bin
 ls -l /
 ls -l /app
 ls -l ${build}
+ls -l ${cache}
+echo "bpdir: ${bpdir}"
+echo "optdir: ${optdir}"
+ls -l ${optdir}
 
 /app/.swipl/bin/swipl -q -o ${build}/splunge -g heroku -t prolog --stand_alone=true -c heroku.pl main.pl
 echo "-----> Build succeeded"
