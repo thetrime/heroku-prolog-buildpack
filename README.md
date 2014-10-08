@@ -9,11 +9,16 @@ Your repository must contain a file swipl.manifest to indicate that it is a SWI-
 If the file is not empty, the contents of the file will be compiled.
 
 Your application must not define heroku/0 or heroku_db_connect/1. heroku_db_connect(-Connection) can be used to obtain a connection to the database connected to your instance. Currently only the primary database is supported (but it would not be
-hard to add support for more).
+hard to add support for more). The server will automatically attach to the heroku HTTP stack. You can just define http-handlers and start processing requests!
+
+Your Procfile should look like this:
+web:    /app/swipl-heroku
 
 If you have a file .preferred_swi_version in your root directory, then that version will be compiled (if possible). Otherwise you will get version 7.1.23.
 
 Xpce and libarchive are not currently included because of missing dependencies, but most other packages (including CQL) are. GMP, unixodbc and psqlodbc are fetched and built if necessary.
+
+An example app is available at https://github.com/thetrime/prolog-getting-started
 
 
 To do:
