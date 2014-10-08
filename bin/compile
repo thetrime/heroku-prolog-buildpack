@@ -61,6 +61,7 @@ cd /app
 tar -xzf ${cache}/psqlodbc.tgz
 
 # Finally: Prolog
+echo "Deleting Prolog"
 rm ${cache}/swipl-${ID}.tgz
 echo "-----> Checking for SWI Prolog version ${ID}"
 (
@@ -98,7 +99,7 @@ echo "-----> Checking for SWI Prolog version ${ID}"
         test -f packages/cql && exit
         cd packages
         git clone https://github.com/SWI-Prolog/packages-cql.git    
-        cd cql
+        cd packages-cql
         make install
     )
     cd /app
