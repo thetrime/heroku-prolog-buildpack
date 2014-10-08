@@ -6,9 +6,6 @@
 set -e
 BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
 OPT_DIR=$(cd "$BIN_DIR/../opt"; pwd)
-echo ${OPT_DIR}
-ls -l ${OPT_DIR}
-exit 7
 bpdir=$(cd $(dirname $(dirname $0)); pwd)
 mkdir -p "$1" "$2"
 build=$(cd "$1/" && pwd)
@@ -132,14 +129,7 @@ Debug = 0
 EOF
 
 PATH=$PATH:/app/.swipl/bin
-ls -l /
-ls -l /app
-ls -l ${build}
-ls -l ${cache}
-echo "bpdir: ${bpdir}"
-echo "optdir: ${optdir}"
-find /app
-
+cp ${OPT_DIR}/heroku.pl .
 /app/.swipl/bin/swipl -q -o ${build}/splunge -g heroku -t prolog --stand_alone=true -c heroku.pl main.pl
 echo "-----> Build succeeded"
 
