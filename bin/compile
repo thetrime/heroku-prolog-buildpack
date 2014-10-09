@@ -39,13 +39,9 @@ export PATH
 
 echo "-----> Compiling slug"
 cd $build
-swipl="/app/.swipl/bin/swipl"
+swipl="/app/.local/bin/swipl"
 arch=$(${swipl} --arch)
-cp -r /app/.swipl ${build}/
-cp -r /app/.odbc ${build}/
-cp -r /app/.psqlodbc ${build}/
-cp -r /app/.gmp ${build}/
-cp -r /app/.libarchive ${build}/
+cp -r /app/.local ${build}/
 # Configure unixodbc
 echo "-----> Configuring unixodbc for PostgreSQL support"
 cat << 'EOF' > ${build}/.odbc/etc/odbcinst.ini
@@ -53,12 +49,12 @@ cat << 'EOF' > ${build}/.odbc/etc/odbcinst.ini
 PostgreSQL = Installed
 
 [PostgreSQL]
-Driver = /app/.psqlodbc/lib/psqlodbcw.so
+Driver = /app/.local/lib/psqlodbcw.so
 Debug = 0
 
 EOF
 
-PATH=$PATH:/app/.swipl/bin
+PATH=$PATH:/app/.local/bin
 cp ${OPT_DIR}/heroku.pl .
 SOURCES="heroku.pl $(cat ${build}/swipl.manifest)"
 if [[ "z${SOURCES}" == "z" ]]; then
@@ -66,6 +62,6 @@ if [[ "z${SOURCES}" == "z" ]]; then
     SOURCES="*.pl"
 fi
 
-/app/.swipl/bin/swipl -q -o ${build}/swipl-heroku -g heroku -t prolog --stand_alone=true -c ${SOURCES}
+/local/.swipl/bin/swipl -q -o ${build}/swipl-heroku -g heroku -t prolog --stand_alone=true -c ${SOURCES}
 echo "-----> Build succeeded"
 
