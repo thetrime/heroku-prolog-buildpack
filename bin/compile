@@ -34,7 +34,7 @@ else
     exit 1
 fi
     
-PATH=${cache}/.swipl/bin:$PATH
+PATH=${cache}/.local/bin:$PATH
 export PATH
 
 echo "-----> Compiling slug"
@@ -62,6 +62,6 @@ if [[ "z${SOURCES}" == "z" ]]; then
     SOURCES="*.pl"
 fi
 
-/local/.swipl/bin/swipl -q -o ${build}/swipl-heroku -g heroku -t prolog --stand_alone=true -c ${SOURCES}
+/app/.local/bin/swipl -q -o ${build}/swipl-heroku -g heroku -t prolog --stand_alone=true -c ${SOURCES}
 echo "-----> Build succeeded"
 
