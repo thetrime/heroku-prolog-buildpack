@@ -44,7 +44,7 @@ arch=$(${swipl} --arch)
 cp -r /app/.local ${build}/
 # Configure unixodbc
 echo "-----> Configuring unixodbc for PostgreSQL support"
-cat << 'EOF' > ${build}/.odbc/etc/odbcinst.ini
+cat << 'EOF' > ${build}/.local/etc/odbcinst.ini
 [ODBC Drivers]
 PostgreSQL = Installed
 
