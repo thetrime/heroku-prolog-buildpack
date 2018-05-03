@@ -16,8 +16,8 @@ if [ -f ${build}/.preferred_swi_version ]; then
     SWI_VERSION=$(cat ${build}/.preferred_swi_version)
     SWI_BRANCH="V${SWI_VERSION}"
 else
-    SWI_VERSION="7.3.20"
-    SWI_BRANCH="V7.3.20"
+    SWI_VERSION="7.7.13"
+    SWI_BRANCH="V7.7.13"
 fi
 ID=${SWI_BRANCH}
 tarball=${ID}.tgz
