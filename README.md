@@ -20,6 +20,7 @@ Xpce is not currently included because of missing dependencies, but most other p
 
 An example app is available at https://github.com/thetrime/prolog-getting-started
 
+You can compile other precompiled binaries using Docker and https://github.com/thetrime/heroku-build-swipl.git
 
 To do:
 ------
